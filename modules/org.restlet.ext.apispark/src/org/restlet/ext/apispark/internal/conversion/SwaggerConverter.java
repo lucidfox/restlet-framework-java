@@ -332,8 +332,15 @@ public abstract class SwaggerConverter {
         // Get resources
         for (Resource resource : definition.getContract().getResources()) {
             // Discriminate the resources of one category
-            if (!resource.getResourcePath().startsWith("/" + category)) {
-                continue;
+            if (resource.getSection() == null
+                    || "".equals(resource.getSection())) {
+                if (!resource.getResourcePath().startsWith("/" + category)) {
+                    continue;
+                }
+            } else {
+                if (!resource.getSection().equals(category)) {
+                    continue;
+                }
             }
             ResourceDeclaration rd = new ResourceDeclaration();
             rd.setPath(resource.getResourcePath());
@@ -548,7 +555,8 @@ public abstract class SwaggerConverter {
             for (Resource resource : definition.getContract().getResources()) {
                 ResourceDeclaration rd = new ResourceDeclaration();
                 rd.setDescription(resource.getDescription());
-                rd.setPath(ReflectUtils.getFirstSegment(resource.getResourcePath()));
+                rd.setPath(ReflectUtils.getFirstSegment(resource
+                        .getResourcePath()));
                 if (!addedApis.contains(rd.getPath())) {
                     addedApis.add(rd.getPath());
                     result.getApis().add(rd);
