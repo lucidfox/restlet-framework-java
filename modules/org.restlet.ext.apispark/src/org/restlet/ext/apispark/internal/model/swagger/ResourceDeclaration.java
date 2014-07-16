@@ -12,6 +12,7 @@ public class ResourceDeclaration {
 
     private String description;
 
+    @JsonInclude(Include.NON_EMPTY)
     private List<ResourceOperationDeclaration> operations;
 
     public String getPath() {
