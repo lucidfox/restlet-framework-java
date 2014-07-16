@@ -340,7 +340,7 @@ public abstract class SwaggerConverter {
             rd.setDescription(resource.getDescription());
 
             // Get operations
-            Map<String, Integer> opsCount = new HashMap<>();
+            Map<String, Integer> opsCount = new HashMap<String, Integer>();
             for (Operation operation : resource.getOperations()) {
                 ResourceOperationDeclaration rod = new ResourceOperationDeclaration();
                 rod.setMethod(operation.getMethod());
