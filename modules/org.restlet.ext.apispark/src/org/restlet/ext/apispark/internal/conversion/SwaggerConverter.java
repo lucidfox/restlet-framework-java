@@ -347,13 +347,25 @@ public abstract class SwaggerConverter {
             rd.setDescription(resource.getDescription());
 
             // Get operations
+            Map<String, Integer> opsCount = new HashMap<>();
             for (Operation operation : resource.getOperations()) {
                 ResourceOperationDeclaration rod = new ResourceOperationDeclaration();
                 rod.setMethod(operation.getMethod());
                 rod.setSummary(operation.getDescription());
-                rod.setNickname(operation.getName());
                 rod.setProduces(operation.getProduces());
                 rod.setConsumes(operation.getConsumes());
+
+                // Compute nickname
+                String opName = operation.getMethod().toLowerCase()
+                        + toCamelCase(resource.getResourcePath());
+                if (opsCount.containsKey(opName)) {
+                    Integer count = opsCount.remove(opName) + 1;
+                    opsCount.put(opName, count);
+                    rod.setNickname(opName + count);
+                } else {
+                    opsCount.put(opName, 0);
+                    rod.setNickname(opName);
+                }
 
                 // Get path variables
                 ResourceOperationParameterDeclaration ropd;
@@ -755,6 +767,26 @@ public abstract class SwaggerConverter {
             throw new SwaggerConversionException("file",
                     "Some API declarations are missing");
         }
+    }
+
+    /**
+     * Removes slashes from path and switch it to camel case
+     * 
+     * @param path
+     *            The path to be switched to camel case
+     * @return The path switched to camel case
+     */
+    private static String toCamelCase(String path) {
+        String result = "";
+        String[] split = path.replaceAll("\\{", "").replaceAll("\\}", "")
+                .split("/");
+        for (String segment : split) {
+            if (segment != null && segment.length() > 0) {
+                result += ("" + segment.charAt(0)).toUpperCase()
+                        + segment.substring(1);
+            }
+        }
+        return result;
     }
 
     /**
