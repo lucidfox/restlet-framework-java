@@ -39,6 +39,7 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -955,100 +956,110 @@ public class JaxrsIntrospector {
         printSentence(o, 7, clazz.getName(), command);
     }
 
-    private static void scan(Annotation annotation,
-            Class<?> parameterType, ApplicationInfo info,
-            ResourceInfo resource, MethodInfo method, Consumes consumes) {
+    private static void scan(Annotation[] annotations, Class<?> parameterClass,
+            Type parameterType, ApplicationInfo info, ResourceInfo resource,
+            MethodInfo method, Consumes consumes) {
         // Indicates that this parameter is instantiated from annotation
         boolean valueComputed = false;
         // TODO sounds like there are several level of parameters, be careful
 
         // Introduced by Jax-rs 2.0
         // BeanParam
-
-        if (annotation instanceof CookieParam) {
-            valueComputed = true;
-            CookieParam cookieparam = (CookieParam) annotation;
-            if (cookieparam != null) {
-                ParameterInfo pi = new ParameterInfo(cookieparam.value(),
-                        ParameterStyle.COOKIE, "Cookie parameter: "
-                                + cookieparam.value());
-                method.getRequest().getParameters().add(pi);
-            }
-        } else if (annotation instanceof DefaultValue) {
-            DefaultValue defaultvalue = (DefaultValue) annotation;
-            System.out.println("param: " + parameterType.getName());
-            if (defaultvalue != null) {
-                System.out.println("defaultvalue " + defaultvalue.value());
-            }
-        } else if (annotation instanceof Encoded) {
-            // ? valueComputed = true;
-            Encoded encoded = (Encoded) annotation;
-            // TODO what "encoded" is designed for?
-        } else if (annotation instanceof FormParam) {
-            valueComputed = true;
-            FormParam formparam = (FormParam) annotation;
-            addRepresentation(method, formparam);
-        } else if (annotation instanceof HeaderParam) {
-            valueComputed = true;
-            HeaderParam headerparam = (HeaderParam) annotation;
-            if (headerparam != null) {
-                ParameterInfo pi = new ParameterInfo(headerparam.value(),
-                        ParameterStyle.HEADER, "header parameter: "
-                                + headerparam.value());
-                method.getParameters().add(pi);
-            }
-        } else if (annotation instanceof MatrixParam) {
-            valueComputed = true;
-            MatrixParam matrixparam = (MatrixParam) annotation;
-            if (matrixparam != null) {
-                ParameterInfo pi = new ParameterInfo(matrixparam.value(),
-                        ParameterStyle.MATRIX, "matrix parameter: "
-                                + matrixparam.value());
-                method.getParameters().add(pi);
-            }
-        } else if (annotation instanceof PathParam) {
-            valueComputed = true;
-            PathParam pathparam = (PathParam) annotation;
-            if (pathparam != null) {
-                boolean found = false;
-                for (ParameterInfo pi : resource.getParameters()) {
-                    if (pi.getName().equals(pathparam.value())) {
-                        found = true;
-                        break;
+        for (Annotation annotation : annotations) {
+            if (annotation instanceof CookieParam) {
+                valueComputed = true;
+                CookieParam cookieparam = (CookieParam) annotation;
+                if (cookieparam != null) {
+                    ParameterInfo pi = new ParameterInfo(cookieparam.value(),
+                            ParameterStyle.COOKIE, "Cookie parameter: "
+                                    + cookieparam.value());
+                    method.getRequest().getParameters().add(pi);
+                }
+            } else if (annotation instanceof DefaultValue) {
+                DefaultValue defaultvalue = (DefaultValue) annotation;
+                System.out.println("param: " + parameterClass.getName());
+                if (defaultvalue != null) {
+                    System.out.println("defaultvalue " + defaultvalue.value());
+                }
+            } else if (annotation instanceof Encoded) {
+                // ? valueComputed = true;
+                Encoded encoded = (Encoded) annotation;
+                // TODO what "encoded" is designed for?
+            } else if (annotation instanceof FormParam) {
+                valueComputed = true;
+                FormParam formparam = (FormParam) annotation;
+                addRepresentation(method, formparam);
+            } else if (annotation instanceof HeaderParam) {
+                valueComputed = true;
+                HeaderParam headerparam = (HeaderParam) annotation;
+                if (headerparam != null) {
+                    ParameterInfo pi = new ParameterInfo(headerparam.value(),
+                            ParameterStyle.HEADER, "header parameter: "
+                                    + headerparam.value());
+                    method.getParameters().add(pi);
+                }
+            } else if (annotation instanceof MatrixParam) {
+                valueComputed = true;
+                MatrixParam matrixparam = (MatrixParam) annotation;
+                if (matrixparam != null) {
+                    ParameterInfo pi = new ParameterInfo(matrixparam.value(),
+                            ParameterStyle.MATRIX, "matrix parameter: "
+                                    + matrixparam.value());
+                    method.getParameters().add(pi);
+                }
+            } else if (annotation instanceof PathParam) {
+                valueComputed = true;
+                PathParam pathparam = (PathParam) annotation;
+                if (pathparam != null) {
+                    boolean found = false;
+                    for (ParameterInfo pi : resource.getParameters()) {
+                        if (pi.getName().equals(pathparam.value())) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        ParameterInfo pi = new ParameterInfo(pathparam.value(),
+                                ParameterStyle.TEMPLATE, "Path parameter: "
+                                        + pathparam.value());
+                        resource.getParameters().add(pi);
                     }
                 }
-                if (!found) {
-                    ParameterInfo pi = new ParameterInfo(pathparam.value(),
-                            ParameterStyle.TEMPLATE, "Path parameter: "
-                                    + pathparam.value());
-                    resource.getParameters().add(pi);
+            } else if (annotation instanceof QueryParam) {
+                valueComputed = true;
+                QueryParam queryparam = (QueryParam) annotation;
+                if (queryparam != null) {
+                    ParameterInfo pi = new ParameterInfo(queryparam.value(),
+                            ParameterStyle.QUERY, "Query parameter: "
+                                    + queryparam.value());
+                    method.getParameters().add(pi);
                 }
+            } else if (annotation instanceof javax.ws.rs.core.Context) {
+                valueComputed = true;
+                javax.ws.rs.core.Context context = (javax.ws.rs.core.Context) annotation;
+                System.out.println("context: " + context);
             }
-        } else if (annotation instanceof QueryParam) {
-            valueComputed = true;
-            QueryParam queryparam = (QueryParam) annotation;
-            if (queryparam != null) {
-                ParameterInfo pi = new ParameterInfo(queryparam.value(),
-                        ParameterStyle.QUERY, "Query parameter: "
-                                + queryparam.value());
-                method.getParameters().add(pi);
-            }
-        } else if (annotation instanceof javax.ws.rs.core.Context) {
-            valueComputed = true;
-            javax.ws.rs.core.Context context = (javax.ws.rs.core.Context) annotation;
-            System.out.println("context: " + context);
         }
 
         if (!valueComputed) {
             // We make the assumption this represents the body...
-            if (consumes != null && parameterType != null
-                    && !Void.class.equals(parameterType)) {
-                for (String consume : consumes.value()) {
+            if (parameterClass != null && !Void.class.equals(parameterClass)) {
+                String[] mediaTypes = null;
+                if (consumes == null || consumes.value() == null
+                        || consumes.value().length == 0) {
+                    // We assume this can't really happen...
+                    // Perhaps, we should rely on Produces annotations?
+                    mediaTypes = new String[1];
+                    mediaTypes[0] = MediaType.APPLICATION_ALL.getName();
+                } else {
+                    mediaTypes = consumes.value();
+                }
+                for (String consume : mediaTypes) {
                     Variant variant = new Variant(MediaType.valueOf(consume));
                     RepresentationInfo representationInfo = null;
 
                     representationInfo = RepresentationInfo.describe(method,
-                            parameterType, variant);
+                            parameterClass, parameterType, variant);
                     if (method.getRequest() == null) {
                         method.setRequest(new RequestInfo());
                     }
@@ -1125,24 +1136,25 @@ public class JaxrsIntrospector {
         FormParam formparam = field.getAnnotation(FormParam.class);
         if (formparam != null) {
             System.out.println("formparam " + formparam.value());
+            formparamList.add(formparam);
         }
 
         HeaderParam headerparam = field.getAnnotation(HeaderParam.class);
         if (headerparam != null) {
-            System.out.println("headerparam " + headerparam.value());
+            headerparamList.add(headerparam);
         }
 
         MatrixParam matrixparam = field.getAnnotation(MatrixParam.class);
         if (matrixparam != null) {
-            System.out.println("matrixparam " + matrixparam.value());
+            matrixparamList.add(matrixparam);
         }
         PathParam pathparam = field.getAnnotation(PathParam.class);
         if (pathparam != null) {
-            System.out.println("pathparam " + pathparam.value());
+            pathparamList.add(pathparam);
         }
         QueryParam queryparam = field.getAnnotation(QueryParam.class);
         if (queryparam != null) {
-            System.out.println("queryparam " + queryparam.value());
+            queryparamList.add(queryparam);
         }
 
         javax.ws.rs.core.Context context = field
@@ -1160,10 +1172,11 @@ public class JaxrsIntrospector {
         MethodInfo mi = new MethodInfo();
         // TODO set documentation?
 
-        if (!formparamList.isEmpty()) {
-            addRepresentation(mi, formparamList.get(0));
+        // TODO enhance
+        for (FormParam formparam : formparamList) {
+            addRepresentation(mi, formparam);
         }
-        
+
         // "Path" decides on which resource to put this method
         Path path = method.getAnnotation(Path.class);
         String fullPath = getPath(cPath, path);
@@ -1304,8 +1317,9 @@ public class JaxrsIntrospector {
                             .getSimpleName());
                     representationInfo.setRaw(true);
                 } else {
-                    representationInfo = RepresentationInfo.describe(mi,
-                            outputClass, variant);
+                    representationInfo = RepresentationInfo
+                            .describe(mi, outputClass,
+                                    method.getGenericReturnType(), variant);
                 }
                 mi.getResponse().getRepresentations().add(representationInfo);
             }
@@ -1320,11 +1334,11 @@ public class JaxrsIntrospector {
         Class<?>[] parameterTypes = method.getParameterTypes();
         int i = 0;
         for (Annotation[] annotations : parameterAnnotations) {
-            Class<?> parameterType = parameterTypes[i++];
-            for (Annotation annotation : annotations) {
-                scan(annotation, parameterType, info, resource, mi,
-                        consumes);
-            }
+            Class<?> parameterType = parameterTypes[i];
+            scan(annotations, parameterType,
+                    method.getGenericParameterTypes()[i], info, resource, mi,
+                    consumes);
+            i++;
         }
 
         // Introduced by Jax-rs 2.0,
@@ -1399,9 +1413,25 @@ public class JaxrsIntrospector {
             List<RepresentationInfo> toBeAdded = new ArrayList<RepresentationInfo>();
             // Initialize the list of classes to be anaylized
             for (RepresentationInfo ri : mapReps.values()) {
+                if (ri.isRaw()) {
+                    continue;
+                }
+                if (ri.isCollection()
+                        && !mapReps.containsKey(ri.getType().getName())) {
+                    // Check if the type has been described.
+                    RepresentationInfo r = new RepresentationInfo(
+                            ri.getMediaType());
+                    r.setType(ri.getType());
+                    toBeAdded.add(r);
+                }
                 // Parent class
-                Class<?> parentType = ri.getParentType();
-                if (ri.getParentType() != null
+                Class<?> parentType = ri.getType().getSuperclass();
+                if (parentType != null && ReflectUtils.isJdkClass(parentType)) {
+                    // TODO This type must introspected too, as it will reveal
+                    // other representation
+                    parentType = null;
+                }
+                if (parentType != null
                         && !mapReps.containsKey(parentType.getName())) {
                     RepresentationInfo r = new RepresentationInfo(
                             ri.getMediaType());
@@ -1419,7 +1449,7 @@ public class JaxrsIntrospector {
                     }
                 }
             }
-            // Second phase, discover classes and loop while classes are unkown
+            // Second phase, discover classes and loop while classes are unknown
             while (!toBeAdded.isEmpty()) {
                 RepresentationInfo[] tab = new RepresentationInfo[toBeAdded
                         .size()];
@@ -1427,14 +1457,26 @@ public class JaxrsIntrospector {
                 toBeAdded.clear();
                 for (int i = 0; i < tab.length; i++) {
                     RepresentationInfo current = tab[i];
-                    if (!ReflectUtils.isJdkClass(current.getType())) {
+                    if (!current.isRaw()
+                            && !ReflectUtils.isJdkClass(current.getType())) {
                         if (!mapReps.containsKey(current.getName())) {
+                            // TODO clearly something is wrong here. We should
+                            // list all representations when discovering the
+                            // method.
                             RepresentationInfo ri = RepresentationInfo
-                                    .introspect(current.getType(),
+                                    .introspect(current.getType(), null,
                                             current.getMediaType());
                             mapReps.put(ri.getIdentifier(), ri);
                             // have a look at the parent type
-                            Class<?> parentType = ri.getParentType();
+
+                            Class<?> parentType = ri.getType().getSuperclass();
+                            if (parentType != null
+                                    && ReflectUtils.isJdkClass(parentType)) {
+                                // TODO This type must introspected too, as it
+                                // will reveal
+                                // other representation
+                                parentType = null;
+                            }
                             if (parentType != null
                                     && !mapReps.containsKey(parentType
                                             .getName())) {
@@ -1443,14 +1485,14 @@ public class JaxrsIntrospector {
                                 r.setType(parentType);
                                 toBeAdded.add(r);
                             }
-                            for (PropertyInfo prop : ri.getProperties()) {
-                                if (prop.getType() != null
-                                        && !mapReps.containsKey(prop.getType()
+                            for (PropertyInfo pi : ri.getProperties()) {
+                                if (pi.getType() != null
+                                        && !mapReps.containsKey(pi.getType()
                                                 .getName())
-                                        && !toBeAdded.contains(prop.getType())) {
+                                        && !toBeAdded.contains(pi.getType())) {
                                     RepresentationInfo r = new RepresentationInfo(
                                             ri.getMediaType());
-                                    r.setType(prop.getType());
+                                    r.setType(pi.getType());
                                     toBeAdded.add(r);
                                 }
                             }
