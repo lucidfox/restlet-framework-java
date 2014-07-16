@@ -324,7 +324,6 @@ public abstract class SwaggerConverter {
         ApiDeclaration result = new ApiDeclaration();
         result.setApiVersion(definition.getVersion());
         result.setBasePath(definition.getEndpoint());
-        result.setInfo(new ApiInfo());
         result.setSwaggerVersion(SWAGGER_VERSION);
         result.setResourcePath("/" + category);
         Set<String> usedModels = new HashSet<String>();

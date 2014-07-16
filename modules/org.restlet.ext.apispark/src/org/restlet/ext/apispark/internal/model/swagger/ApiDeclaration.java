@@ -29,8 +29,6 @@ public class ApiDeclaration {
 
     private AuthorizationsDeclaration authorizations;
 
-    private ApiInfo info;
-
     public String getApiVersion() {
         return apiVersion;
     }
@@ -64,14 +62,6 @@ public class ApiDeclaration {
 
     public void setApis(List<ResourceDeclaration> apis) {
         this.apis = apis;
-    }
-
-    public ApiInfo getInfo() {
-        return info;
-    }
-
-    public void setInfo(ApiInfo info) {
-        this.info = info;
     }
 
     public Map<String, ModelDeclaration> getModels() {
