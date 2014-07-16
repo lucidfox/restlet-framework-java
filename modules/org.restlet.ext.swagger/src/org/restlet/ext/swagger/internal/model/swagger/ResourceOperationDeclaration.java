@@ -20,6 +20,7 @@ public class ResourceOperationDeclaration {
     @JsonProperty("$ref")
     private String ref;
 
+    @JsonInclude(Include.NON_EMPTY)
     private ItemsDeclaration items;
 
     private List<ResourceOperationParameterDeclaration> parameters;
