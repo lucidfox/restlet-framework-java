@@ -58,6 +58,8 @@ public class Contract {
     /** Resources provided by the API. */
     private List<Resource> resources;
 
+    private List<Section> sections;
+
     public String getDescription() {
         return description;
     }
@@ -94,5 +96,13 @@ public class Contract {
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
+    }
+
+    public List<Section> getSections() {
+        return sections;
+    }
+
+    public void setSections(List<Section> sections) {
+        this.sections = sections;
     }
 }

@@ -33,73 +33,35 @@
 
 package org.restlet.ext.apispark.internal.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
+
 /**
+ * TODO
  * 
  * @author Cyprien Quilici
  */
-public class Resource {
+public class Section {
 
-    /** Textual description of this resource */
-    private String description;
-
-    /** Name of this resource */
+    /** The name of the section */
     private String name;
-
-    /** List of the APIs this resource provides */
-    private List<Operation> operations;
-
-    /** The variables you must provide for this operation. */
-    private List<PathVariable> pathVariables;
-
-    /** Relative path from the endpoint to this resource */
-    private String resourcePath;
-
-    public String getDescription() {
-        return description;
-    }
+    
+    /** The list of resources that this section contains */
+    private List<Resource> resources;
 
     public String getName() {
         return name;
-    }
-
-    public List<Operation> getOperations() {
-        if (operations == null) {
-            operations = new ArrayList<Operation>();
-        }
-        return operations;
-    }
-
-    public List<PathVariable> getPathVariables() {
-        if (pathVariables == null) {
-            pathVariables = new ArrayList<PathVariable>();
-        }
-        return pathVariables;
-    }
-
-    public String getResourcePath() {
-        return resourcePath;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setOperations(List<Operation> operations) {
-        this.operations = operations;
+    public List<Resource> getResources() {
+        return resources;
     }
 
-    public void setPathVariables(List<PathVariable> pathVariables) {
-        this.pathVariables = pathVariables;
-    }
-
-    public void setResourcePath(String resourcePath) {
-        this.resourcePath = resourcePath;
+    public void setResources(List<Resource> resources) {
+        this.resources = resources;
     }
 }
