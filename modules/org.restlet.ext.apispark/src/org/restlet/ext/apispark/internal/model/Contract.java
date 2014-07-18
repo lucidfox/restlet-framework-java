@@ -58,6 +58,7 @@ public class Contract {
     /** Resources provided by the API. */
     private List<Resource> resources;
 
+    /** Sections of the API */
     private List<Section> sections;
 
     public String getDescription() {
