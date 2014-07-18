@@ -148,9 +148,7 @@ public class Introspector {
             resource.setName(ri.getIdentifier());
             if (ri.getPath() == null) {
                 resource.setResourcePath("/");
-                resource.setSection("root");
             } else {
-                resource.setSection(ReflectUtils.getFirstSegment(ri.getPath()));
                 if (!ri.getPath().startsWith("/")) {
                     resource.setResourcePath("/" + ri.getPath());
                 } else {

@@ -131,7 +131,6 @@ public abstract class SwaggerConverter {
                     declaredPathVariables = new ArrayList<String>();
                     resource = new Resource();
                     resource.setResourcePath(api.getPath());
-                    resource.setSection(entry.getKey());
 
                     // Operations listing
                     Operation operation;
@@ -331,15 +330,8 @@ public abstract class SwaggerConverter {
         // Get resources
         for (Resource resource : definition.getContract().getResources()) {
             // Discriminate the resources of one category
-            if (resource.getSection() == null
-                    || "".equals(resource.getSection())) {
-                if (!resource.getResourcePath().startsWith("/" + category)) {
-                    continue;
-                }
-            } else {
-                if (!resource.getSection().equals(category)) {
-                    continue;
-                }
+            if (!resource.getResourcePath().startsWith("/" + category)) {
+                continue;
             }
             ResourceDeclaration rd = new ResourceDeclaration();
             rd.setPath(resource.getResourcePath());
