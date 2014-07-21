@@ -578,21 +578,35 @@ public abstract class SwaggerConverter {
         }
         // Resources
         List<String> addedApis = new ArrayList<String>();
-        if (definition.getContract() != null
-                && definition.getContract().getResources() != null) {
-            result.setApis(new ArrayList<ResourceDeclaration>());
-
-            for (Resource resource : definition.getContract().getResources()) {
-                ResourceDeclaration rd = new ResourceDeclaration();
-                rd.setDescription(resource.getDescription());
-                rd.setPath(ReflectUtils.getFirstSegment(resource
-                        .getResourcePath()));
-                if (!addedApis.contains(rd.getPath())) {
-                    addedApis.add(rd.getPath());
-                    result.getApis().add(rd);
+        result.setApis(new ArrayList<ResourceDeclaration>());
+        if (definition.getContract() != null) {
+            if (definition.getContract().getResources() != null) {
+                for (Resource resource : definition.getContract()
+                        .getResources()) {
+                    ResourceDeclaration rd = new ResourceDeclaration();
+                    rd.setDescription(resource.getDescription());
+                    rd.setPath(ReflectUtils.getFirstSegment(resource
+                            .getResourcePath()));
+                    if (!addedApis.contains(rd.getPath())) {
+                        addedApis.add(rd.getPath());
+                        result.getApis().add(rd);
+                    }
+                }
+            } else if (definition.getContract().getSections() != null) {
+                for (Section section : definition.getContract().getSections()) {
+                    for (Resource resource : section.getResources()) {
+                        ResourceDeclaration rd = new ResourceDeclaration();
+                        rd.setDescription(resource.getDescription());
+                        rd.setPath("/" + section.getName());
+                        if (!addedApis.contains(rd.getPath())) {
+                            addedApis.add(rd.getPath());
+                            result.getApis().add(rd);
+                        }
+                    }
                 }
             }
         }
+
         Collections.sort(result.getApis(),
                 new Comparator<ResourceDeclaration>() {
                     @Override
