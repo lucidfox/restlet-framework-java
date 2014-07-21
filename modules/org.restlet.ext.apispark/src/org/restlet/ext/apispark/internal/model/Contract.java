@@ -100,6 +100,9 @@ public class Contract {
     }
 
     public List<Section> getSections() {
+        if (sections == null) {
+            sections = new ArrayList<Section>();
+        }
         return sections;
     }
 
