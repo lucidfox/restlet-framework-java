@@ -46,6 +46,9 @@ public class Section {
     /** The name of the section */
     private String name;
     
+    /** Description of the section */
+    private String description;
+    
     /** The list of resources that this section contains */
     private List<Resource> resources;
 
@@ -63,5 +66,13 @@ public class Section {
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
