@@ -35,7 +35,6 @@ package org.restlet.ext.apispark.internal.model;
 
 import java.util.List;
 
-
 /**
  * TODO
  * 
@@ -45,10 +44,10 @@ public class Section {
 
     /** The name of the section */
     private String name;
-    
+
     /** Description of the section */
     private String description;
-    
+
     /** The list of resources that this section contains */
     private List<Resource> resources;
 

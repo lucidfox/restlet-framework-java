@@ -33,7 +33,6 @@
 
 package org.restlet.ext.swagger.internal.model;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -41,72 +40,38 @@ import java.util.List;
  * 
  * @author Cyprien Quilici
  */
-public class Contract {
+public class Section {
 
-    /** Textual description of the API. */
-    private String description;
-
-    /** Name of the API. */
+    /** The name of the section */
     private String name;
 
-    /**
-     * Representations available with this API Note: their "name" is used as a
-     * reference further in this description.
-     */
-    private List<Representation> representations;
+    /** Description of the section */
+    private String description;
 
-    /** Resources provided by the API. */
+    /** The list of resources that this section contains */
     private List<Resource> resources;
-
-    /** Sections of the API */
-    private List<Section> sections;
-
-    public String getDescription() {
-        return description;
-    }
 
     public String getName() {
         return name;
-    }
-
-    public List<Representation> getRepresentations() {
-        if (representations == null) {
-            representations = new ArrayList<Representation>();
-        }
-        return representations;
-    }
-
-    public List<Resource> getResources() {
-        if (resources == null) {
-            resources = new ArrayList<Resource>();
-        }
-        return resources;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public void setName(String name) {
         this.name = name;
     }
 
-    public void setRepresentations(List<Representation> representations) {
-        this.representations = representations;
+    public List<Resource> getResources() {
+        return resources;
     }
 
     public void setResources(List<Resource> resources) {
         this.resources = resources;
     }
 
-    public List<Section> getSections() {
-        if (sections == null) {
-            sections = new ArrayList<Section>();
-        }
-        return sections;
+    public String getDescription() {
+        return description;
     }
 
-    public void setSections(List<Section> sections) {
-        this.sections = sections;
+    public void setDescription(String description) {
+        this.description = description;
     }
 }

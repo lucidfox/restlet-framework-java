@@ -60,6 +60,7 @@ import org.restlet.ext.swagger.internal.model.QueryParameter;
 import org.restlet.ext.swagger.internal.model.Representation;
 import org.restlet.ext.swagger.internal.model.Resource;
 import org.restlet.ext.swagger.internal.model.Response;
+import org.restlet.ext.swagger.internal.model.Section;
 import org.restlet.ext.swagger.internal.model.swagger.ApiDeclaration;
 import org.restlet.ext.swagger.internal.model.swagger.ApiInfo;
 import org.restlet.ext.swagger.internal.model.swagger.ItemsDeclaration;
@@ -131,7 +132,6 @@ public abstract class SwaggerConverter {
                     declaredPathVariables = new ArrayList<String>();
                     resource = new Resource();
                     resource.setResourcePath(api.getPath());
-                    resource.setSection(entry.getKey());
 
                     // Operations listing
                     Operation operation;
@@ -313,25 +313,32 @@ public abstract class SwaggerConverter {
      * Retrieves the Swagger API declaration corresponding to a category of the
      * given Restlet Web API Definition
      * 
-     * @param category
+     * @param sectionName
      *            The category of the API declaration
      * @param definition
      *            The Restlet Web API Definition
      * @return The Swagger API definition of the given category
      */
-    public static ApiDeclaration getApiDeclaration(String category,
+    public static ApiDeclaration getApiDeclaration(String sectionName,
             Definition definition) {
         ApiDeclaration result = new ApiDeclaration();
         result.setApiVersion(definition.getVersion());
         result.setBasePath(definition.getEndpoint());
         result.setSwaggerVersion(SWAGGER_VERSION);
-        result.setResourcePath("/" + category);
+        result.setResourcePath("/" + sectionName);
         Set<String> usedModels = new HashSet<String>();
+        Section section = getSectionByName(definition.getContract(),
+                sectionName);
+        boolean noSection = section == null;
+        List<Resource> sectionResources = noSection ? definition.getContract()
+                .getResources() : section.getResources();
 
         // Get resources
-        for (Resource resource : definition.getContract().getResources()) {
+        for (Resource resource : sectionResources) {
             // Discriminate the resources of one category
-            if (!resource.getResourcePath().startsWith("/" + category)) {
+            if (noSection
+                    && !resource.getResourcePath()
+                            .startsWith("/" + sectionName)) {
                 continue;
             }
             ResourceDeclaration rd = new ResourceDeclaration();
@@ -500,6 +507,25 @@ public abstract class SwaggerConverter {
                     }
                 });
         return result;
+    }
+
+    /**
+     * Returns a section from a contract given its name
+     * 
+     * @param contract
+     *            The contract in which the section is searched for
+     * @param name
+     *            The name of the section to retrieve
+     * @return The section with the given name or null if no section has the
+     *         given name
+     */
+    private static Section getSectionByName(Contract contract, String name) {
+        for (Section section : contract.getSections()) {
+            if (section.getName().equals(name)) {
+                return section;
+            }
+        }
+        return null;
     }
 
     /**

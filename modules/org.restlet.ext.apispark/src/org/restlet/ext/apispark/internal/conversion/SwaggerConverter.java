@@ -327,14 +327,18 @@ public abstract class SwaggerConverter {
         result.setSwaggerVersion(SWAGGER_VERSION);
         result.setResourcePath("/" + sectionName);
         Set<String> usedModels = new HashSet<String>();
-        Section section = getSectionByName(definition.getContract(), sectionName);
+        Section section = getSectionByName(definition.getContract(),
+                sectionName);
         boolean noSection = section == null;
-        List<Resource> sectionResources = noSection ? definition.getContract().getResources() : section.getResources();
+        List<Resource> sectionResources = noSection ? definition.getContract()
+                .getResources() : section.getResources();
 
         // Get resources
         for (Resource resource : sectionResources) {
             // Discriminate the resources of one category
-            if (noSection && !resource.getResourcePath().startsWith("/" + sectionName)) {
+            if (noSection
+                    && !resource.getResourcePath()
+                            .startsWith("/" + sectionName)) {
                 continue;
             }
             ResourceDeclaration rd = new ResourceDeclaration();
@@ -504,15 +508,19 @@ public abstract class SwaggerConverter {
                 });
         return result;
     }
-    
+
     /**
      * Returns a section from a contract given its name
-     * @param contract The contract in which the section is searched for
-     * @param name The name of the section to retrieve
-     * @return The section with the given name or null if no section has the given name
+     * 
+     * @param contract
+     *            The contract in which the section is searched for
+     * @param name
+     *            The name of the section to retrieve
+     * @return The section with the given name or null if no section has the
+     *         given name
      */
     private static Section getSectionByName(Contract contract, String name) {
-        for (Section section: contract.getSections()) {
+        for (Section section : contract.getSections()) {
             if (section.getName().equals(name)) {
                 return section;
             }
