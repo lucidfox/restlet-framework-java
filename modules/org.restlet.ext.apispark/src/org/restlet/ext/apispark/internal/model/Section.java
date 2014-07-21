@@ -33,6 +33,7 @@
 
 package org.restlet.ext.apispark.internal.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -60,6 +61,9 @@ public class Section {
     }
 
     public List<Resource> getResources() {
+        if (resources == null) {
+            resources = new ArrayList<Resource>();
+        }
         return resources;
     }
 
