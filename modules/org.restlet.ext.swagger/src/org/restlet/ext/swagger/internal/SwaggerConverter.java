@@ -580,7 +580,7 @@ public abstract class SwaggerConverter {
         List<String> addedApis = new ArrayList<String>();
         result.setApis(new ArrayList<ResourceDeclaration>());
         if (definition.getContract() != null) {
-            if (definition.getContract().getResources() != null) {
+            if (!definition.getContract().getResources().isEmpty()) {
                 for (Resource resource : definition.getContract()
                         .getResources()) {
                     ResourceDeclaration rd = new ResourceDeclaration();
@@ -592,7 +592,7 @@ public abstract class SwaggerConverter {
                         result.getApis().add(rd);
                     }
                 }
-            } else if (definition.getContract().getSections() != null) {
+            } else if (!definition.getContract().getSections().isEmpty()) {
                 for (Section section : definition.getContract().getSections()) {
                     for (Resource resource : section.getResources()) {
                         ResourceDeclaration rd = new ResourceDeclaration();
