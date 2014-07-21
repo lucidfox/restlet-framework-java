@@ -36,7 +36,7 @@ package org.restlet.ext.swagger.internal.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.restlet.ext.apispark.internal.model.Resource;
+import org.restlet.ext.swagger.internal.model.Resource;
 
 /**
  * TODO
